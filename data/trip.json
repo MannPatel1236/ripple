@@ -1,0 +1,121 @@
+{
+  "id": "trip_bom_del_001",
+  "title": "Mumbai → Delhi, 3 nights",
+  "nodes": [
+    {
+      "id": "n1",
+      "type": "FLIGHT",
+      "label": "6E-204 Mumbai → Delhi",
+      "vendor": "IndiGo",
+      "start": "2026-11-20T17:30:00",
+      "end": "2026-11-20T19:45:00",
+      "from_loc": "BOM",
+      "to_loc": "DEL",
+      "cost": 6400,
+      "policy_id": "p_flight_out"
+    },
+    {
+      "id": "n2",
+      "type": "TRANSFER",
+      "label": "Airport transfer to hotel",
+      "vendor": "CityCabs",
+      "start": "2026-11-20T20:15:00",
+      "end": "2026-11-20T21:15:00",
+      "from_loc": "DEL",
+      "to_loc": "Aerocity",
+      "cost": 1200,
+      "policy_id": "p_transfer"
+    },
+    {
+      "id": "n3",
+      "type": "HOTEL",
+      "label": "Hotel check-in (3 nights)",
+      "vendor": "Booking.com",
+      "start": "2026-11-20T22:00:00",
+      "end": "2026-11-23T11:00:00",
+      "from_loc": "Aerocity",
+      "to_loc": null,
+      "cost": 12000,
+      "policy_id": "p_hotel"
+    },
+    {
+      "id": "n4",
+      "type": "EVENT",
+      "label": "Dinner show booking",
+      "vendor": "BookMyShow",
+      "start": "2026-11-20T21:30:00",
+      "end": "2026-11-20T23:30:00",
+      "from_loc": "Delhi",
+      "to_loc": null,
+      "cost": 7000,
+      "policy_id": "p_event"
+    },
+    {
+      "id": "n5",
+      "type": "TOUR",
+      "label": "Agra day tour",
+      "vendor": "Viator",
+      "start": "2026-11-21T06:00:00",
+      "end": "2026-11-21T20:00:00",
+      "from_loc": "Delhi",
+      "to_loc": "Agra",
+      "cost": 8000,
+      "policy_id": "p_tour"
+    },
+    {
+      "id": "n6",
+      "type": "FLIGHT",
+      "label": "6E-661 Delhi → Mumbai",
+      "vendor": "IndiGo",
+      "start": "2026-11-23T14:00:00",
+      "end": "2026-11-23T16:10:00",
+      "from_loc": "DEL",
+      "to_loc": "BOM",
+      "cost": 7900,
+      "policy_id": "p_flight_ret"
+    }
+  ],
+  "edges": [
+    {
+      "src": "n1",
+      "dst": "n2",
+      "kind": "MIN_GAP",
+      "slack_minutes": 30,
+      "hard": true,
+      "note": "30 min to clear the terminal and reach the pickup point"
+    },
+    {
+      "src": "n2",
+      "dst": "n3",
+      "kind": "ARRIVE_BEFORE",
+      "slack_minutes": 0,
+      "hard": true,
+      "note": "Hotel guarantees the room only until 22:00"
+    },
+    {
+      "src": "n1",
+      "dst": "n4",
+      "kind": "MIN_GAP",
+      "slack_minutes": 90,
+      "hard": true,
+      "note": "Landing to venue, 90 min minimum"
+    },
+    {
+      "src": "n3",
+      "dst": "n5",
+      "kind": "MIN_GAP",
+      "slack_minutes": 360,
+      "hard": false,
+      "note": "6 hours rest after check-in before a 06:00 departure",
+      "measure_from": "start"
+    },
+    {
+      "src": "n5",
+      "dst": "n6",
+      "kind": "MIN_GAP",
+      "slack_minutes": 240,
+      "hard": true,
+      "note": "Tour must end at least 4h before the return flight"
+    }
+  ]
+}

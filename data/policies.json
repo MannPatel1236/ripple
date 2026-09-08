@@ -1,0 +1,171 @@
+{
+  "_comment": "Pre-parsed policy cache. Produced by scripts/parse_policies.py from raw vendor text. NEVER parsed live during a demo. Replace with genuine parser output once real policies are collected.",
+  "policies": [
+    {
+      "policy_id": "p_flight_out",
+      "booking_label": "6E-204 Mumbai → Delhi",
+      "total": 6400,
+      "refund_rules": [
+        {
+          "before_hours": 48,
+          "refund_pct": 55
+        },
+        {
+          "before_hours": 4,
+          "refund_pct": 25
+        },
+        {
+          "before_hours": 0,
+          "refund_pct": 0
+        }
+      ],
+      "change_allowed": true,
+      "change_fee": 3000,
+      "source_clause": "Cancellations made more than 48 hours prior to scheduled departure attract a cancellation fee of ₹2,900 per passenger. Between 48 and 4 hours, ₹4,800 per passenger. No refund is payable for no-show.",
+      "source_url": "https://www.goindigo.in/information/cancellation-and-refund.html",
+      "confidence": 0.93
+    },
+    {
+      "policy_id": "p_flight_ret",
+      "booking_label": "6E-661 Delhi → Mumbai",
+      "total": 7900,
+      "refund_rules": [
+        {
+          "before_hours": 48,
+          "refund_pct": 55
+        },
+        {
+          "before_hours": 4,
+          "refund_pct": 25
+        },
+        {
+          "before_hours": 0,
+          "refund_pct": 0
+        }
+      ],
+      "change_allowed": true,
+      "change_fee": 3000,
+      "source_clause": "Cancellations made more than 48 hours prior to scheduled departure attract a cancellation fee of ₹2,900 per passenger. Between 48 and 4 hours, ₹4,800 per passenger. No refund is payable for no-show.",
+      "source_url": "https://www.goindigo.in/information/cancellation-and-refund.html",
+      "confidence": 0.93
+    },
+    {
+      "policy_id": "p_transfer",
+      "booking_label": "Airport transfer to hotel",
+      "total": 1200,
+      "refund_rules": [
+        {
+          "before_hours": 2,
+          "refund_pct": 100
+        },
+        {
+          "before_hours": 0,
+          "refund_pct": 0
+        }
+      ],
+      "change_allowed": true,
+      "change_fee": 0,
+      "source_clause": "Free cancellation up to 2 hours before the scheduled pickup time. Cancellations after this point, and no-shows, are charged in full.",
+      "source_url": null,
+      "confidence": 0.97
+    },
+    {
+      "policy_id": "p_hotel",
+      "booking_label": "Hotel check-in (3 nights)",
+      "total": 12000,
+      "refund_rules": [
+        {
+          "before_hours": 24,
+          "refund_pct": 100
+        },
+        {
+          "before_hours": 0,
+          "refund_pct": 60
+        }
+      ],
+      "change_allowed": false,
+      "change_fee": 0,
+      "source_clause": "Cancellations received more than 24 hours prior to the scheduled check-in date are refunded in full. Thereafter the first night's tariff is retained. In the event of non-arrival without prior intimation the booking is treated as a no-show and the full amount is forfeited.",
+      "source_url": "https://www.booking.com",
+      "confidence": 0.88
+    },
+    {
+      "policy_id": "p_event",
+      "booking_label": "Dinner show booking",
+      "total": 7000,
+      "refund_rules": [
+        {
+          "before_hours": 24,
+          "refund_pct": 50
+        },
+        {
+          "before_hours": 0,
+          "refund_pct": 0
+        }
+      ],
+      "change_allowed": false,
+      "change_fee": 0,
+      "source_clause": "Tickets cancelled at least 24 hours before showtime are eligible for a 50% refund. No refunds are issued within 24 hours of the performance.",
+      "source_url": null,
+      "confidence": 0.95
+    },
+    {
+      "policy_id": "p_tour",
+      "booking_label": "Agra day tour",
+      "total": 8000,
+      "refund_rules": [
+        {
+          "before_hours": 0,
+          "refund_pct": 0
+        }
+      ],
+      "change_allowed": true,
+      "change_fee": 800,
+      "source_clause": "This experience is non-refundable and cannot be cancelled for a refund. Date changes may be requested up to 12 hours before departure subject to an amendment fee and availability.",
+      "source_url": "https://www.viator.com",
+      "confidence": 0.99
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "alt_transfer_late",
+      "replaces_type": "TRANSFER",
+      "label": "Late-night airport cab",
+      "vendor": "CityCabs",
+      "start": "2026-11-21T01:30:00",
+      "end": "2026-11-21T02:30:00",
+      "cost": 1900,
+      "note": "Night surcharge applies"
+    },
+    {
+      "id": "alt_hotel_late",
+      "replaces_type": "HOTEL",
+      "label": "Guaranteed late arrival (same hotel)",
+      "vendor": "Booking.com",
+      "start": "2026-11-21T02:30:00",
+      "end": "2026-11-23T11:00:00",
+      "cost": 12800,
+      "note": "Rebooked on a late-arrival rate, room held all night"
+    },
+    {
+      "id": "alt_tour_next_day",
+      "replaces_type": "TOUR",
+      "label": "Agra day tour — moved to 22 Nov",
+      "vendor": "Viator",
+      "start": "2026-11-22T06:00:00",
+      "end": "2026-11-22T20:00:00",
+      "cost": 8800,
+      "note": "Date change fee ₹800, subject to availability"
+    },
+    {
+      "id": "alt_event_next",
+      "replaces_type": "EVENT",
+      "label": "Dinner show — next evening",
+      "vendor": "BookMyShow",
+      "start": "2026-11-21T21:30:00",
+      "end": "2026-11-21T23:30:00",
+      "cost": 7000,
+      "note": "Same tier seats available"
+    }
+  ]
+}

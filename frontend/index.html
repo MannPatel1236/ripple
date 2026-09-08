@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ripple — Travel Disruption Recovery Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TRUE BLUE & WHITE LIGHT THEME
+   Bright, crisp, professional travel operations interface
+   ============================================================ */
+:root {
+  /* White & Blue Foundations */
+  --bg-body: #f4f8fc;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #f8fbfe;
+  --bg-blue-mist: #eef6ff;
+  --bg-blue-light: #e0effe;
+  
+  /* Borders */
+  --border-subtle: #e2e8f0;
+  --border-blue: #bfdbfe;
+  --border-blue-hover: #93c5fd;
+
+  /* Blue Palette */
+  --blue-900: #1e3a8a;
+  --blue-800: #1e40af;
+  --blue-700: #1d4ed8;
+  --blue-600: #2563eb;
+  --blue-500: #3b82f6;
+  --blue-100: #dbeafe;
+  --blue-50:  #eff6ff;
+
+  /* Neutral Text on White */
+  --text-dark: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+
+  /* Status Colors (Muted, Non-Neon) */
+  --ok-text: #166534;
+  --ok-bg: #f0fdf4;
+  --ok-border: #bbf7d0;
+  --ok-bar: #22c55e;
+
+  --warn-text: #92400e;
+  --warn-bg: #fffbeb;
+  --warn-border: #fde68a;
+  --warn-bar: #f59e0b;
+
+  --bad-text: #991b1b;
+  --bad-bg: #fef2f2;
+  --bad-border: #fecaca;
+  --bad-bar: #ef4444;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(30, 64, 175, 0.05);
+  --shadow-card: 0 2px 5px 0 rgba(30, 64, 175, 0.04), 0 1px 2px 0 rgba(15, 23, 42, 0.03);
+  --shadow-hover: 0 8px 16px -2px rgba(37, 99, 235, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
+  --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 10px 10px -5px rgba(15, 23, 42, 0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg-body);
+  color: var(--text-body);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* -------------------------------------------------------------
+   Top Navigation (Clean White Bar with Royal Blue Brand)
+   ------------------------------------------------------------- */
+.top-navbar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.04);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.nav-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.brand-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--blue-700), var(--blue-600));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.brand-text h1 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--blue-900);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.brand-text span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.nav-item {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--blue-700);
+  border-bottom-color: var(--blue-600);
+  font-weight: 600;
+}
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.clock-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--blue-900);
+  background: var(--bg-blue-mist);
+  border: 1px solid var(--border-blue);
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--blue-600);
+}
+
+/* -------------------------------------------------------------
+   Main Layout Wrapper
+   ------------------------------------------------------------- */
+.main-wrapper {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 24px 60px;
+}
+
+/* -------------------------------------------------------------
+   Trip Overview Card (White & Blue Accents)
+   ------------------------------------------------------------- */
+.trip-banner {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--blue-600);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.trip-banner-info h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--blue-900);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.status-pill {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.status-pill.ok {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+  border: 1px solid var(--ok-border);
+}
+.status-pill.alarm {
+  background: var(--bad-bg);
+  color: var(--bad-text);
+  border: 1px solid var(--bad-border);
+}
+
+.trip-meta-row {
+  display: flex;
+  gap: 20px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.trip-meta-item strong {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------
+   Simulation Workbench (Light Blue Tint Bar)
+   ------------------------------------------------------------- */
+.simulation-panel {
+  background: #ffffff;
+  border: 1px solid var(--border-blue);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sim-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue-900);
+}
+.sim-badge {
+  background: var(--blue-100);
+  color: var(--blue-700);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.sim-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+button {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-blue-solid {
+  background: var(--blue-600);
+  color: #ffffff;
+  border-color: var(--blue-700);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+}
+.btn-blue-solid:hover {
+  background: var(--blue-700);
+}
+
+.btn-blue-soft {
+  background: var(--blue-50);
+  color: var(--blue-700);
+  border-color: var(--border-blue);
+}
+.btn-blue-soft:hover {
+  background: var(--blue-100);
+  border-color: var(--blue-500);
+}
+
+.btn-reset-light {
+  background: #ffffff;
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
+}
+.btn-reset-light:hover {
+  background: #f8fafc;
+  color: var(--text-dark);
+}
+
+/* -------------------------------------------------------------
+   Main 2-Column Grid
+   ------------------------------------------------------------- */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 410px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Left Column: Itinerary Chain */
+.itinerary-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.section-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-title-bar h3 {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--blue-900);
+}
+.section-title-bar span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.booking-card {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+.booking-card:hover {
+  border-color: var(--border-blue-hover);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.booking-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.booking-vendor-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vendor-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--bg-blue-mist);
+  color: var(--blue-700);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.booking-name-block {
+  display: flex;
+  flex-direction: column;
+}
+.booking-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.booking-vendor-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.node-status-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+.node-status-pill.OK {
+  background: var(--ok-bg);
+  color: var(--ok-text);
+  border: 1px solid var(--ok-border);
+}
+.node-status-pill.AT_RISK {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  border: 1px solid var(--warn-border);
+}
+.node-status-pill.BROKEN {
+  background: var(--bad-bg);
+  color: var(--bad-text);
+  border: 1px solid var(--bad-border);
+}
+
+.booking-data-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 10px;
+}
+.data-item {
+  display: flex;
+  flex-direction: column;
+}
+.data-item .lbl {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.data-item .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-top: 1px;
+}
+
+.booking-issue-alert {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+.booking-issue-alert.BROKEN {
+  background: var(--bad-bg);
+  color: var(--bad-text);
+  border: 1px solid var(--bad-border);
+}
+.booking-issue-alert.AT_RISK {
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  border: 1px solid var(--warn-border);
+}
+
+.booking-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border-subtle);
+  font-size: 11.5px;
+  color: var(--blue-700);
+  font-weight: 500;
+}
+
+.chain-slack-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+  position: relative;
+}
+.chain-slack-bar::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: var(--border-blue);
+  z-index: 1;
+}
+.chain-slack-pill {
+  position: relative;
+  z-index: 2;
+  background: #ffffff;
+  border: 1px solid var(--border-blue);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--blue-800);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* -------------------------------------------------------------
+   Right Column: Sticky Recovery Console
+   ------------------------------------------------------------- */
+.sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 75px;
+}
+
+.white-card {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.card-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.card-header-line h4 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--blue-900);
+}
+.card-badge-blue {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--blue-100);
+  color: var(--blue-700);
+}
+
+/* Exposure Stats */
+.exp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.exp-tile {
+  padding: 8px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  text-align: center;
+}
+.exp-tile.safe { background: var(--ok-bg); border-color: var(--ok-border); }
+.exp-tile.risk { background: var(--warn-bg); border-color: var(--warn-border); }
+.exp-tile.lost { background: var(--bad-bg); border-color: var(--bad-border); }
+
+.exp-tile .lbl { font-size: 10px; text-transform: uppercase; font-weight: 600; color: var(--text-muted); }
+.exp-tile .val { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text-dark); margin-top: 1px; }
+
+.multi-progress-bar {
+  display: flex;
+  height: 7px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-card-subtle);
+  margin-bottom: 12px;
+}
+
+.countdown-box {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  color: #78350f;
+}
+.countdown-timer-badge {
+  background: #f59e0b;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* Recovery Plans */
+.strategy-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.strat-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.strat-card:hover {
+  border-color: var(--blue-500);
+}
+.strat-card.selected {
+  border-color: var(--blue-600);
+  background: var(--bg-blue-mist);
+  box-shadow: 0 0 0 1px var(--blue-600);
+}
+
+.strat-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+.strat-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--blue-900);
+}
+.strat-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.strat-metrics-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px;
+  background: #ffffff;
+  border: 1px solid var(--border-blue);
+  border-radius: 6px;
+  font-size: 11px;
+}
+.strat-metrics-row strong { font-family: 'JetBrains Mono', monospace; }
+
+/* Action Checklist */
+.action-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+.action-item-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px;
+}
+.action-item-row:last-child { border-bottom: none; }
+
+.action-kind-pill {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.action-kind-pill.KEEP { background: var(--ok-bg); color: var(--ok-text); border: 1px solid var(--ok-border); }
+.action-kind-pill.CANCEL { background: var(--bad-bg); color: var(--bad-text); border: 1px solid var(--bad-border); }
+.action-kind-pill.REBOOK { background: var(--blue-100); color: var(--blue-700); border: 1px solid var(--border-blue); }
+
+.action-item-text { flex: 1; }
+.action-item-text .title { font-weight: 600; color: var(--text-dark); }
+.action-item-text .expl { color: var(--text-muted); font-size: 11.5px; margin-top: 2px; }
+.action-item-text .dl { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #b45309; margin-top: 3px; }
+
+.action-summary-row {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------
+   Policy Modal (White & Blue)
+   ------------------------------------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(3px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+.modal-backdrop.open { display: flex; }
+
+.modal-box {
+  background: #ffffff;
+  border: 1px solid var(--border-blue);
+  border-radius: 12px;
+  max-width: 580px;
+  width: 100%;
+  padding: 22px 24px;
+  box-shadow: var(--shadow-modal);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.modal-head h3 { font-size: 16.5px; font-weight: 700; color: var(--blue-900); }
+.modal-head .sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+
+.modal-close {
+  background: var(--bg-blue-mist);
+  border: 1px solid var(--border-blue);
+  border-radius: 6px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--blue-800);
+  font-weight: 600;
+}
+.modal-close:hover { background: var(--blue-100); }
+
+.modal-body-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.contract-clause-box {
+  background: var(--bg-blue-mist);
+  border: 1px solid var(--border-blue);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.contract-clause-box .tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--blue-800); margin-bottom: 4px; }
+.contract-clause-box .text { font-size: 12px; color: var(--text-body); font-style: italic; line-height: 1.5; }
+
+.refund-table-box {
+  background: #ffffff;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.refund-table-box .tag { font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.refund-rule-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  font-size: 12px;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+.refund-rule-row:last-child { border-bottom: none; }
+
+.modal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+  .content-grid { grid-template-columns: 1fr; }
+  .sidebar-column { position: static; }
+  .nav-menu { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="top-navbar">
+  <div class="nav-container">
+    <div class="brand-area">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Ripple</h1>
+        <span>Travel Disruption Recovery Engine</span>
+      </div>
+    </div>
+
+    <div class="nav-menu">
+      <a href="#" class="nav-item active">Itinerary Radar</a>
+      <a href="#" class="nav-item">Policy Library</a>
+      <a href="#" class="nav-item">Disruption Analyzer</a>
+    </div>
+
+    <div class="nav-status">
+      <div class="clock-chip">
+        <span class="pulse-dot"></span>
+        <span id="demo-clock-text">Simulating…</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="main-wrapper">
+  <!-- Trip Header Banner -->
+  <section class="trip-banner">
+    <div class="trip-banner-info">
+      <h2>
+        <span id="banner-trip-title">Mumbai → Delhi (3 Nights)</span>
+        <span class="status-pill ok" id="banner-status-pill">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span id="banner-status-text">Itinerary Fully Protected</span>
+        </span>
+      </h2>
+      <div class="trip-meta-row">
+        <div class="trip-meta-item">Trip ID: <strong id="meta-trip-id">trip_bom_del_001</strong></div>
+        <div class="trip-meta-item">Bookings: <strong id="meta-nodes-count">6 items</strong></div>
+        <div class="trip-meta-item">Total Value: <strong id="meta-total-val">—</strong></div>
+        <div class="trip-meta-item">Airports: <strong>BOM ➔ DEL (Round Trip)</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Simulation Control Workbench -->
+  <section class="simulation-panel">
+    <div class="sim-heading">
+      <span class="sim-badge">TEST BENCH</span>
+      <span>Simulate Flight Disruption on 6E-204:</span>
+    </div>
+    <div class="sim-buttons">
+      <button class="btn-blue-solid" onclick="disrupt(300)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        Simulate 5-Hour Delay
+      </button>
+      <button class="btn-blue-soft" onclick="disrupt(180)">
+        Simulate 3-Hour Delay
+      </button>
+      <button class="btn-reset-light" onclick="reset()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+        </svg>
+        Reset to Schedule
+      </button>
+    </div>
+  </section>
+
+  <!-- 2-Column Application Area -->
+  <div class="content-grid">
+    <!-- Left Column: Itinerary Dependency Chain -->
+    <main class="itinerary-column">
+      <div class="section-title-bar">
+        <h3>Connected Itinerary Journey</h3>
+        <span>Click any card to inspect contract cancellation terms</span>
+      </div>
+
+      <div id="chain-cards-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </main>
+
+    <!-- Right Column: Recovery Console -->
+    <aside class="sidebar-column">
+      <!-- Exposure Card -->
+      <div class="white-card" id="exposure-box">
+        <div class="card-header-line">
+          <h4>Financial Exposure Radar</h4>
+          <span class="card-badge-blue" id="exp-status-pill">100% Protected</span>
+        </div>
+
+        <div class="exp-grid">
+          <div class="exp-tile safe">
+            <div class="lbl">Protected</div>
+            <div class="val" id="val-safe" style="color:var(--ok-text)">—</div>
+          </div>
+          <div class="exp-tile risk">
+            <div class="lbl">At Risk</div>
+            <div class="val" id="val-risk" style="color:var(--warn-text)">—</div>
+          </div>
+          <div class="exp-tile lost">
+            <div class="lbl">Lost</div>
+            <div class="val" id="val-lost" style="color:var(--bad-text)">—</div>
+          </div>
+        </div>
+
+        <div class="multi-progress-bar">
+          <div id="progress-safe" style="width:100%; background:var(--ok-bar)"></div>
+          <div id="progress-risk" style="width:0%; background:var(--warn-bar)"></div>
+          <div id="progress-lost" style="width:0%; background:var(--bad-bar)"></div>
+        </div>
+
+        <div id="deadline-radar-box" style="display:none">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Recovery Strategies Card -->
+      <div class="white-card" id="recovery-box" style="display:none">
+        <div class="card-header-line">
+          <h4>Optimal Recovery Options</h4>
+          <span class="card-badge-blue">3 Presets</span>
+        </div>
+        <div class="strategy-cards-list" id="strategies-list">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Action Plan Checklist -->
+      <div class="white-card" id="action-plan-box" style="display:none">
+        <div class="card-header-line">
+          <h4 id="action-plan-header">Action Checklist</h4>
+          <span class="card-badge-blue" style="background:#f0fdf4; color:var(--ok-text)">Ready</span>
+        </div>
+        <div style="font-size:11.5px; color:var(--text-muted); line-height:1.4">
+          Independent guidance. You execute bookings directly with vendors to maintain custody.
+        </div>
+        <div class="action-items-list" id="action-items-container">
+          <!-- Rendered dynamically -->
+        </div>
+        <div class="action-summary-row">
+          <span>Net Financial Cost:</span>
+          <span id="plan-cost-total" style="color:var(--bad-text)">—</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Modal Dialog -->
+<div class="modal-backdrop" id="policy-dialog" onclick="if(event.target.id==='policy-dialog')closeModal()">
+  <div class="modal-box" id="modal-box-inner">
+    <!-- Populated by showPolicy() -->
+  </div>
+</div>
+
+<script>
+const API = "";
+let STATE = null, DEADLINE = null, NOW = null, TICK = null;
+
+const money = n => "₹" + Math.round(n).toLocaleString("en-IN");
+const hhmm  = s => new Date(s).toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", hour12:false});
+const dm    = s => new Date(s).toLocaleString("en-IN", {day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit", hour12:false});
+
+const VENDOR_ICONS = {
+  FLIGHT: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>`,
+  TRANSFER: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>`,
+  HOTEL: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 7h1M9 11h1M9 15h1M14 7h1M14 11h1M14 15h1"/></svg>`,
+  EVENT: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`,
+  TOUR: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`
+};
+
+async function load(){
+  try {
+    const r = await fetch(API + "/api/trip");
+    STATE = await r.json();
+    NOW = new Date(STATE.now);
+
+    document.getElementById("banner-trip-title").textContent = STATE.trip.title;
+    document.getElementById("meta-trip-id").textContent = STATE.trip.id;
+    document.getElementById("meta-nodes-count").textContent = STATE.trip.nodes.length + " items";
+    document.getElementById("meta-total-val").textContent = money(STATE.total_value);
+    document.getElementById("demo-clock-text").textContent = "Simulated: " + dm(STATE.now);
+
+    // Banner status
+    const statusPill = document.getElementById("banner-status-pill");
+    statusPill.className = "status-pill ok";
+    document.getElementById("banner-status-text").textContent = "Itinerary Fully Protected";
+
+    renderChain(STATE.trip);
+    renderInitialExposure(STATE.exposure);
+
+    document.getElementById("recovery-box").style.display = "none";
+    document.getElementById("action-plan-box").style.display = "none";
+  } catch (err) {
+    console.error("Trip loading error:", err);
+  }
+}
+
+function reset(){
+  if (TICK) clearInterval(TICK);
+  load();
+}
+
+async function disrupt(mins){
+  try {
+    const r = await fetch(API + "/api/disrupt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ node_id: "n1", delay_minutes: mins })
+    });
+    STATE = await r.json();
+    NOW = new Date(STATE.now);
+
+    const statusPill = document.getElementById("banner-status-pill");
+    statusPill.className = "status-pill alarm";
+    document.getElementById("banner-status-text").textContent = "Disruption Cascade Active";
+
+    renderChain(STATE.trip);
+    renderExposure(STATE.exposure);
+    renderStrategies(STATE.options);
+    document.getElementById("action-plan-box").style.display = "none";
+  } catch (err) {
+    console.error("Disrupt error:", err);
+  }
+}
+
+function renderChain(trip){
+  const el = document.getElementById("chain-cards-container");
+  el.innerHTML = "";
+
+  trip.nodes.forEach((n, idx) => {
+    const card = document.createElement("div");
+    card.className = "booking-card";
+    card.onclick = () => showPolicy(n.policy_id);
+
+    let statusText = "Feasible";
+    if (n.status === "AT_RISK") statusText = "At Risk";
+    if (n.status === "BROKEN") statusText = "Infeasible";
+
+    const iconSvg = VENDOR_ICONS[n.type] || VENDOR_ICONS.FLIGHT;
+
+    card.innerHTML = `
+      <div class="booking-card-head">
+        <div class="booking-vendor-info">
+          <div class="vendor-icon">${iconSvg}</div>
+          <div class="booking-name-block">
+            <span class="booking-name">${n.label}</span>
+            <span class="booking-vendor-sub">${n.vendor} · ${n.type}</span>
+          </div>
+        </div>
+        <span class="node-status-pill ${n.status}">${statusText}</span>
+      </div>
+
+      <div class="booking-data-row">
+        <div class="data-item">
+          <span class="lbl">Schedule</span>
+          <span class="val">${hhmm(n.start)} → ${hhmm(n.end)}</span>
+        </div>
+        <div class="data-item">
+          <span class="lbl">Routing</span>
+          <span class="val" style="font-family:inherit; font-size:12px;">${n.from_loc || "—"}${n.to_loc ? " ➔ " + n.to_loc : ""}</span>
+        </div>
+        <div class="data-item" style="text-align:right">
+          <span class="lbl">Cost</span>
+          <span class="val">${money(n.cost)}</span>
+        </div>
+      </div>
+
+      ${n.reason ? `
+        <div class="booking-issue-alert ${n.status}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0; margin-top:2px;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span><strong>Impact:</strong> ${n.reason}</span>
+        </div>
+      ` : ""}
+
+      <div class="booking-card-foot">
+        <span>Click to inspect cancellation contract & refund policy</span>
+        <span>View Rules →</span>
+      </div>
+    `;
+
+    el.appendChild(card);
+
+    if (idx < trip.nodes.length - 1) {
+      const e = trip.edges.find(x => x.src === n.id);
+      const slackDiv = document.createElement("div");
+      slackDiv.className = "chain-slack-bar";
+      slackDiv.innerHTML = `
+        <div class="chain-slack-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="12 5 19 12 12 19"></polyline>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          ${e && e.slack_minutes ? `Connection slack: ${e.slack_minutes}m buffer` : `Direct connection`}
+        </div>
+      `;
+      el.appendChild(slackDiv);
+    }
+  });
+}
+
+function renderInitialExposure(x){
+  document.getElementById("exp-status-pill").textContent = "100% Protected";
+  document.getElementById("val-safe").textContent = money(x.safe);
+  document.getElementById("val-risk").textContent = "₹0";
+  document.getElementById("val-lost").textContent = "₹0";
+
+  document.getElementById("progress-safe").style.width = "100%";
+  document.getElementById("progress-risk").style.width = "0%";
+  document.getElementById("progress-lost").style.width = "0%";
+
+  document.getElementById("deadline-radar-box").style.display = "none";
+}
+
+function renderExposure(x){
+  const t = x.total_trip_value;
+  const pct = v => (100 * v / t).toFixed(1) + "%";
+
+  document.getElementById("exp-status-pill").textContent = `${x.affected_count} Affected`;
+  document.getElementById("val-safe").textContent = money(x.safe);
+  document.getElementById("val-risk").textContent = money(x.at_risk);
+  document.getElementById("val-lost").textContent = money(x.lost);
+
+  document.getElementById("progress-safe").style.width = pct(x.safe);
+  document.getElementById("progress-risk").style.width = pct(x.at_risk);
+  document.getElementById("progress-lost").style.width = pct(x.lost);
+
+  const dlBox = document.getElementById("deadline-radar-box");
+  if (x.next_deadline) {
+    DEADLINE = new Date(x.next_deadline);
+    dlBox.style.display = "block";
+    dlBox.innerHTML = `
+      <div class="countdown-box">
+        <span class="countdown-timer-badge" id="timer-display">—</span>
+        <div>
+          <strong>Upcoming Refund Cliff:</strong> Cancellation window for <strong>${x.next_deadline_label}</strong> is closing.
+        </div>
+      </div>
+    `;
+    startCountdown();
+  } else {
+    dlBox.style.display = "none";
+  }
+}
+
+function startCountdown(){
+  if (TICK) clearInterval(TICK);
+  let elapsed = 0;
+  const paint = () => {
+    const left = DEADLINE - NOW - elapsed * 1000;
+    const el = document.getElementById("timer-display");
+    if (!el) return;
+    if (left <= 0){
+      el.textContent = "CLOSED";
+      clearInterval(TICK);
+      return;
+    }
+    const h = Math.floor(left / 3.6e6);
+    const m = Math.floor((left % 3.6e6) / 6e4);
+    const s = Math.floor((left % 6e4) / 1000);
+    el.textContent = `${h}h ${String(m).padStart(2,"0")}m ${String(s).padStart(2,"0")}s`;
+    elapsed++;
+  };
+  paint();
+  TICK = setInterval(paint, 1000);
+}
+
+function renderStrategies(opts){
+  const box = document.getElementById("recovery-box");
+  const list = document.getElementById("strategies-list");
+  box.style.display = "block";
+  list.innerHTML = "";
+
+  opts.forEach((o, idx) => {
+    const card = document.createElement("div");
+    card.className = "strat-card" + (idx === 0 ? " selected" : "");
+    card.onclick = () => {
+      document.querySelectorAll(".strat-card").forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      renderPlan(o);
+    };
+
+    const hrs = (o.time_lost_minutes / 60).toFixed(1);
+
+    card.innerHTML = `
+      <div class="strat-card-top">
+        <span class="strat-name">${o.title}</span>
+        <span style="font-size:11px; font-weight:600; color:var(--blue-700)">Option #${idx+1}</span>
+      </div>
+      <div class="strat-desc">${o.subtitle}</div>
+      <div class="strat-metrics-row">
+        <span>Loss: <strong style="color:var(--bad-text)">${money(o.money_lost)}</strong></span>
+        <span>Trip Kept: <strong style="color:var(--ok-text)">${o.preserved_pct}%</strong></span>
+        <span>Shift: <strong>${hrs}h</strong></span>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  if (opts.length > 0) {
+    renderPlan(opts[0]);
+  }
+}
+
+function renderPlan(o){
+  const box = document.getElementById("action-plan-box");
+  const container = document.getElementById("action-items-container");
+  box.style.display = "block";
+  document.getElementById("action-plan-header").textContent = "Action Plan: " + o.title;
+  document.getElementById("plan-cost-total").textContent = money(o.money_lost);
+
+  container.innerHTML = o.actions.map(a => `
+    <div class="action-item-row">
+      <span class="action-kind-pill ${a.kind}">${a.kind}</span>
+      <div class="action-item-text">
+        <div class="title">${a.node_label}</div>
+        <div class="expl">${a.explanation}</div>
+        ${a.deadline ? `<div class="dl">⏱ Act before ${dm(a.deadline)}</div>` : ""}
+      </div>
+    </div>
+  `).join("");
+}
+
+async function showPolicy(pid){
+  try {
+    const r = await fetch(API + "/api/policy/" + pid);
+    const p = await r.json();
+
+    const rules = p.refund_rules.map(x => `
+      <div class="refund-rule-row">
+        <span style="color:var(--text-muted)">≥ ${x.before_hours}h before start:</span>
+        <span style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--blue-900);">${x.refund_pct}% refund</span>
+      </div>
+    `).join("");
+
+    document.getElementById("modal-box-inner").innerHTML = `
+      <div class="modal-head">
+        <div>
+          <h3>${p.booking_label}</h3>
+          <div class="sub">Policy #${p.policy_id} · Booking Amount ${money(p.total)}</div>
+        </div>
+        <button class="modal-close" onclick="closeModal()" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body-section">
+        <div class="contract-clause-box">
+          <div class="tag">Original Contract Terms</div>
+          <div class="text">“${p.source_clause}”</div>
+        </div>
+
+        <div class="refund-table-box">
+          <div class="tag">Extracted Refund Schedule</div>
+          <div>${rules}</div>
+          <div style="margin-top:10px; padding-top:8px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; font-size:12.5px;">
+            <span style="color:var(--text-muted)">Eligible refund right now:</span>
+            <span style="font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--ok-text)">${money(p.refund_now ?? 0)}</span>
+          </div>
+          ${p.next_deadline ? `
+            <div style="margin-top:4px; display:flex; justify-content:space-between; font-size:12px;">
+              <span style="color:var(--text-muted)">Next cliff cutoff:</span>
+              <span style="font-family:'JetBrains Mono', monospace; font-weight:600; color:var(--bad-text)">${dm(p.next_deadline)}</span>
+            </div>
+          ` : ""}
+        </div>
+      </div>
+
+      <div class="modal-foot">
+        <span>Extraction Confidence: ${(p.confidence*100).toFixed(0)}% (Deterministic)</span>
+        <button class="btn-blue-soft" onclick="closeModal()" style="padding:4px 12px; font-size:12px;">Close</button>
+      </div>
+    `;
+
+    document.getElementById("policy-dialog").classList.add("open");
+  } catch (err) {
+    console.error("Policy modal error:", err);
+  }
+}
+
+function closeModal(){
+  document.getElementById("policy-dialog").classList.remove("open");
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+});
+
+load();
+</script>
+</body>
+</html>
