@@ -840,6 +840,7 @@ button {
     </div>
 
     <div class="nav-status">
+      <button class="btn-blue-soft" id="api-btn" onclick="promptBackendUrl()" style="padding: 4px 10px; font-size: 11.5px;">API Settings</button>
       <div class="clock-chip">
         <span class="pulse-dot"></span>
         <span id="demo-clock-text">Simulating…</span>
@@ -987,7 +988,58 @@ button {
 </div>
 
 <script>
-const API = "";
+// Configure your deployed Render backend URL here if desired, or set it via the navbar button
+const CONFIG_BACKEND_URL = "";
+
+function getApiBase() {
+  const urlParam = new URLSearchParams(window.location.search).get("api");
+  if (urlParam) {
+    const cleaned = urlParam.replace(/\/$/, "");
+    localStorage.setItem("ripple_backend_url", cleaned);
+    return cleaned;
+  }
+  const saved = localStorage.getItem("ripple_backend_url");
+  if (saved) return saved.replace(/\/$/, "");
+  if (CONFIG_BACKEND_URL) return CONFIG_BACKEND_URL.replace(/\/$/, "");
+  return "";
+}
+
+let API = getApiBase();
+
+function promptBackendUrl() {
+  const next = prompt("Enter your Render Backend URL (e.g. https://ripple-backend.onrender.com):", API || "https://");
+  if (next !== null) {
+    const cleaned = next.trim().replace(/\/$/, "");
+    if (cleaned && cleaned !== "https://") {
+      API = cleaned;
+      localStorage.setItem("ripple_backend_url", cleaned);
+    } else {
+      API = "";
+      localStorage.removeItem("ripple_backend_url");
+    }
+    updateApiButtonState();
+    load();
+  }
+}
+
+function updateApiButtonState() {
+  const btn = document.getElementById("api-btn");
+  if (!btn) return;
+  if (API) {
+    btn.textContent = "API: Connected";
+    btn.title = "Connected to " + API + " (Click to change)";
+    btn.style.color = "var(--ok-text)";
+    btn.style.background = "var(--ok-bg)";
+    btn.style.borderColor = "var(--ok-border)";
+  } else {
+    btn.textContent = "API Settings";
+    btn.title = "Using default origin. Click to specify Render backend URL.";
+    btn.style.color = "var(--blue-700)";
+    btn.style.background = "var(--blue-50)";
+    btn.style.borderColor = "var(--border-blue)";
+  }
+}
+
 let STATE = null, DEADLINE = null, NOW = null, TICK = null;
 
 const money = n => "₹" + Math.round(n).toLocaleString("en-IN");
@@ -1003,6 +1055,7 @@ const VENDOR_ICONS = {
 };
 
 async function load(){
+  updateApiButtonState();
   try {
     const r = await fetch(API + "/api/trip");
     STATE = await r.json();
